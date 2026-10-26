@@ -37,7 +37,7 @@ st.markdown("""
 # URL GOOGLE APPS SCRIPT WEB APP & SPREADSHEET CSV READ
 # ---------------------------------------------------------
 # Paste URL Web App dari Apps Script di bawah ini:
-WEB_APP_URL = "https://script.google.com/macros/s/AKfycbzYa8RO_pIuticf6xT7JNz-3gB62_pH0iGlyDtZ5rbZu4IQ0uIPqxUlZjKKPvKxZCL6/exec"  # <--- GANTI LINK INI
+WEB_APP_URL = "https://script.google.com/macros/s/AKfycbwNeU_2Hi2pfbzedgoN-kRnsyqlKP8nwbIwLSqkpsRUf4Hr5s5Rw2cV-8iyhe1JdbvN/exec"  # <--- GANTI LINK INI
 
 # Link CSV untuk membaca data publik spreadsheet secara langsung:
 SPREADSHEET_ID = "1JOudkfgyJrlc2iTlsKofHNja3Xkn2NgLV4D1k-_9jd4"
@@ -254,70 +254,247 @@ elif menu == "📝 Absensi Harian":
             st.error("❌ PIN Akses Salah! Gunakan PIN **3200**.")
 
 # ---------------------------------------------------------
-# 5. KUIS ASYNCHRONOUS
+# 5. KUIS ASYNCHRONOUS (TERSTRUKTUR & OTOMATIS TERSIMPAN KE GOOGLE SHEETS)
 # ---------------------------------------------------------
 elif menu == "✏️ Kuis Asynchronous":
     st.markdown("<div class='main-title'>✏️ Kuis Evaluasi Asynchronous</div>", unsafe_allow_html=True)
-    st.markdown("<div class='sub-title'>Uji Pemahaman Mandiri Hari 1 & Hari 2 (Kesempatan 1x Kirim)</div>", unsafe_allow_html=True)
+    st.markdown("<div class='sub-title'>Uji Pemahaman Mandiri Hari 1 & Hari 2 PES SE2026</div>", unsafe_allow_html=True)
     st.divider()
 
-    pilihan_kuis = st.radio("Pilih Kuis:", ["Kuis Hari 1: Metodologi & Pencacahan", "Kuis Hari 2: Pengawasan & CAPI"], horizontal=True)
+    daftar_kab_kota = [
+        "Kabupaten Bogor", "Kabupaten Sukabumi", "Kabupaten Cianjur", "Kabupaten Bandung",
+        "Kabupaten Garut", "Kabupaten Tasikmalaya", "Kabupaten Ciamis", "Kabupaten Kuningan",
+        "Kabupaten Cirebon", "Kabupaten Majalengka", "Kabupaten Sumedang", "Kabupaten Indramayu",
+        "Kabupaten Subang", "Kabupaten Purwakarta", "Kabupaten Karawang", "Kabupaten Bekasi",
+        "Kabupaten Bandung Barat", "Kabupaten Pangandaran", "Kota Bogor", "Kota Sukabumi",
+        "Kota Bandung", "Kota Cirebon", "Kota Bekasi", "Kota Depok", "Kota Cimahi",
+        "Kota Tasikmalaya", "Kota Banjar"
+    ]
 
-    if pilihan_kuis == "Kuis Hari 1: Metodologi & Pencacahan":
-        st.subheader("📝 Kuis Hari 1")
+    pilihan_kuis = st.radio(
+        "Pilih Kuis Evaluasi:",
+        ["Kuis Hari 1: Konsep, Metodologi & Pencacahan Lapangan", "Kuis Hari 2: Pengawasan, Kasus Batas & CAPI/Webmon"],
+        horizontal=True
+    )
+
+    # ---------------------------------------------------------
+    # KUIS HARI 1
+    # ---------------------------------------------------------
+    if pilihan_kuis == "Kuis Hari 1: Konsep, Metodologi & Pencacahan Lapangan":
+        st.subheader("📝 Kuis Evaluasi Hari 1")
+        st.caption("Cakupan: Kode 1 (Organisasi), Kode 2 (Metodologi), Kode 3 (Wawancara), Kode 4 (Pemutakhiran P), Kode 5 (Pencacahan L)")
+        
         with st.form("kuis_hari_1"):
-            nama_kuis = st.text_input("Nama Lengkap *")
-            id_kuis = st.text_input("ID Petugas *")
+            st.markdown("##### 👤 Data Peserta")
+            col_a, col_b, col_c = st.columns(3)
+            with col_a:
+                nama_kuis = st.text_input("Nama Lengkap Petugas *")
+            with col_b:
+                id_kuis = st.text_input("ID Petugas / NIP *")
+            with col_c:
+                kab_kota_kuis = st.selectbox("Kabupaten/Kota Tugas *", daftar_kab_kota, key="kab_h1")
             
-            q1 = st.radio(
-                "1. Apa cakupan utama pendataan Post Enumeration Survey Sensus Ekonomi 2026?",
-                ["Hanya usaha skala besar", "Seluruh aktivitas ekonomi non-pertanian", "Hanya sektor perdagangan e-commerce", "Sektor pertanian skala mikro"]
+            st.divider()
+            st.markdown("##### 📋 Soal Evaluasi Hari 1")
+
+            q1_1 = st.radio(
+                "1. [Kode 101] Apa tujuan utama dari pelaksanaan Post Enumeration Survey (PES) SE2026?",
+                [
+                    "a) Mengukur cakupan (coverage) dan akurasi kualitas data Sensus Ekonomi 2026",
+                    "b) Mengganti seluruh data Sensus Ekonomi 2026",
+                    "c) Menghitung jumlah penduduk di wilayah perkotaan saja",
+                    "d) Melakukan pemungutan pajak bagi usaha mikro"
+                ]
             )
-            q2 = st.radio(
-                "2. Kriteria utama penetapan bangunan sebagai tempat usaha adalah?",
-                ["Memiliki papan nama usaha", "Terdapat kegiatan transaksi/produksi barang & jasa", "Bangunan permanen bertingkat", "Memiliki izin legalitas PT/CV"]
+
+            q1_2 = st.radio(
+                "2. [Kode 102] Siapa saja yang menjadi target responden dalam pelaksanaan pendataan lapangan PES SE2026?",
+                [
+                    "a) Pelaku usaha/perusahaan non-pertanian di bangunan fisik maupun non-bangunan",
+                    "b) Hanya perusahaan berbadan hukum PT/CV",
+                    "c) Hanya pedagang di pasar tradisional",
+                    "d) Seluruh rumah tangga tanpa kegiatan usaha"
+                ]
             )
-            
-            submit_kuis1 = st.form_submit_button("Kirim Jawaban Kuis Hari 1")
-            
+
+            q1_3 = st.radio(
+                "3. [Soal 1.1] Apa langkah pertama yang wajib dilakukan petugas lapangan sebelum memasuki wilayah blok sensus tugasnya?",
+                [
+                    "a) Langsung menguji coba aplikasi pendataan.",
+                    "b) Melapor dan berkoordinasi dengan ketua SLS / pengurus lokal setempat.",
+                    "c) Mengisi kuesioner dengan data perkiraan.",
+                    "d) Mengirimkan hasil pendataan ke server pusat."
+                ]
+            )
+
+            q1_4 = st.radio(
+                "4. [Soal 1.2] Jika responden menolak untuk diwawancarai pada kunjungan pertama, apa tindakan yang paling tepat dilakukan oleh petugas?",
+                [
+                    "a) Memaksa responden saat itu juga.",
+                    "b) Membiarkan data kosong dan mengganti dengan tetangga.",
+                    "c) Bersikap sopan, mencatat alasan penolakan, dan menjadwalkan ulang kunjungan bersama PML.",
+                    "d) Langsung melaporkan responden ke pihak kepolisian."
+                ]
+            )
+
+            submit_kuis1 = st.form_submit_button("📤 Kirim Jawaban Kuis Hari 1")
+
             if submit_kuis1:
                 if nama_kuis and id_kuis:
                     skor = 0
-                    if q1 == "Seluruh aktivitas ekonomi non-pertanian": skor += 50
-                    if q2 == "Terdapat kegiatan transaksi/produksi barang & jasa": skor += 50
-                    
-                    st.balloons()
-                    st.success(f"🎉 Kuis Berhasil Dikirim! Skor Anda: **{skor} / 100**")
-                else:
-                    st.error("❌ Harap isi Nama dan ID Petugas.")
+                    if q1_1.startswith("a)"): skor += 25
+                    if q1_2.startswith("a)"): skor += 25
+                    if q1_3.startswith("b)"): skor += 25
+                    if q1_4.startswith("c)"): skor += 25
 
-    elif pilihan_kuis == "Kuis Hari 2: Pengawasan & CAPI":
-        st.subheader("📝 Kuis Hari 2")
+                    status_lulus = "LULUS" if skor >= 70 else "TIDAK LULUS"
+                    waktu_selesai = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+
+                    # Kirim data ke Google Sheets
+                    payload_kuis = {
+                        "type": "kuis",
+                        "waktu_selesai": waktu_selesai,
+                        "nama": nama_kuis,
+                        "id_petugas": id_kuis,
+                        "kab_kota": kab_kota_kuis,
+                        "jenis_kuis": "Kuis Hari 1",
+                        "skor": skor,
+                        "status": status_lulus
+                    }
+                    try:
+                        requests.post(WEB_APP_URL, json=payload_kuis)
+                    except Exception as e:
+                        pass
+
+                    st.balloons()
+                    st.success(f"🎉 Selamat **{nama_kuis}**, kuis Hari 1 telah terkirim dan tersimpan ke Google Sheets!")
+                    st.metric(label="Nilai Akhir Kuis Hari 1", value=f"{skor} / 100")
+                    if skor >= 70:
+                        st.info("🏆 **Status:** LULUS Evaluasi Hari 1")
+                    else:
+                        st.warning("⚠️ **Status:** Belum Memenuhi Nilai Kelulusan Minimal (70). Pelajari kembali materi Hari 1.")
+                else:
+                    st.error("❌ Harap isi Nama dan ID Petugas sebelum mengirimkan kuis.")
+
+    # ---------------------------------------------------------
+    # KUIS HARI 2
+    # ---------------------------------------------------------
+    elif pilihan_kuis == "Kuis Hari 2: Pengawasan, Kasus Batas & CAPI/Webmon":
+        st.subheader("📝 Kuis Evaluasi Hari 2")
+        st.caption("Cakupan: Kode 6 (Pemeriksaan), Kode 7 (Rekonsiliasi), Kode 8 (Kasus Batas), Kode 9 (CAPI FASIH & Webmon)")
+
         with st.form("kuis_hari_2"):
-            nama_kuis = st.text_input("Nama Lengkap *")
-            id_kuis = st.text_input("ID Petugas *")
-            
-            q1 = st.radio(
-                "1. Jika ditemukan usaha mikro yang tidak memiliki catatan keuangan resmi, tindakan petugas adalah?",
-                ["Langsung mengosongkan kuesioner", "Melakukan teknik estimasi pendekatan pendapatan/pengeluaran", "Menghentikan wawancara", "Meminta responden membuat pembukuan dulu"]
+            st.markdown("##### 👤 Data Peserta")
+            col_a, col_b, col_c = st.columns(3)
+            with col_a:
+                nama_kuis = st.text_input("Nama Lengkap Petugas *")
+            with col_b:
+                id_kuis = st.text_input("ID Petugas / NIP *")
+            with col_c:
+                kab_kota_kuis = st.selectbox("Kabupaten/Kota Tugas *", daftar_kab_kota, key="kab_h2")
+
+            st.divider()
+            st.markdown("##### 📋 Soal Evaluasi Hari 2")
+
+            q2_ex1 = st.radio(
+                "1. [Kode 201] Bagaimanakah cara mencatat usaha yang memiliki lebih dari satu lokasi kegiatan (cabang)?",
+                ["a) Dicatat sesuai unit usaha di masing-masing lokasi operasionalnya", "b) Hanya dicatat di kantor pusat saja", "c) Digabungkan menjadi satu tanpa rincian lokasi", "d) Tidak perlu didata jika usahanya kecil"]
             )
-            q2 = st.radio(
-                "2. Pengisian status keberadaan usaha yang telah pindah alamat dicatat sebagai?",
-                ["Aktif di lokasi lama", "Pindah / Tidak Ditemukan", "Tutup Permanen", "Diabaikan"]
+            q2_ex2 = st.radio(
+                "2. [Kode 202] Pembina/Pemeriksa lapangan yang bertugas mendampingi, memverifikasi, dan mengawasi PPL di lapangan disebut...",
+                ["a) Koseka", "b) PML (Pemeriksa Lapangan)", "c) BPS Pusat", "d) Admin Webmon"]
             )
-            
-            submit_kuis2 = st.form_submit_button("Kirim Jawaban Kuis Hari 2")
-            
+            q2_1 = st.radio(
+                "3. [Soal 2.1] Dalam pengisian alur kuesioner, apa yang harus dipastikan petugas sebelum berpindah ke halaman/blok pertanyaan berikutnya?",
+                ["a) Semua pertanyaan wajib telah terisi lengkap dan konsisten", "b) Mengosongkan jawaban yang dirasa sulit", "c) Menghapus rincian jawaban jika terlalu panjang", "d) Membiarkan peringatan error pada aplikasi"]
+            )
+            q2_2 = st.radio(
+                "4. [Soal 2.2] Apa kriteria utama suatu kegiatan dapat dicatat sebagai usaha/perusahaan pada SE2026?",
+                ["a) Memiliki izin resmi dari pemerintah saja", "b) Ada kegiatan ekonomi yang menghasilkan barang/jasa dengan tujuan komersial/dijual", "c) Harus memiliki tempat fisik yang luas", "d) Memiliki karyawan minimal 10 orang"]
+            )
+            q2_3 = st.radio(
+                "5. [Soal 2.3] Jika suatu bangunan digunakan sekaligus sebagai tempat tinggal dan tempat usaha toko kelontong, bagaimana pencatatannya?",
+                ["a) Dicatat hanya sebagai tempat tinggal", "b) Dicatat sebagai tempat tinggal dan dicatat keberadaan usahanya", "c) Tidak perlu dicatat sama sekali", "d) Dicatat dua kali sebagai tempat usaha terpisah"]
+            )
+            q2_4 = st.radio(
+                "6. [Soal 2.4] Apa fungsi utama dari Peta Blok Sensus (Wilkerstat) yang dipegang oleh petugas lapangan?",
+                ["a) Sebagai penanda batas wilayah tugas agar tidak terjadi penumpukan/lewat batas pendataan", "b) Sebagai syarat pencairan honor", "c) Untuk diserahkan kepada responden", "d) Hanya sebagai pelengkap berkas"]
+            )
+            q2_5 = st.radio(
+                "7. [Soal 2.5] Apabila ditemukan usaha online (e-commerce) yang dijalankan dari rumah tanpa papan nama usaha, apakah tetap didata?",
+                ["a) Ya, tetap didata sesuai keberadaan domisili/operasional usahanya", "b) Tidak, karena tidak ada bangunan fisiknya", "c) Hanya didata jika memiliki izin usaha formal", "d) Ditunda sampai memiliki toko fisik"]
+            )
+            q2_6 = st.radio(
+                "8. [Soal 2.6] Periode rujukan data pendapatan/omzet yang ditanyakan kepada responden umumnya mengacu pada periode...",
+                ["a) 10 tahun terakhir", "b) Periode rujukan waktu yang ditentukan dalam juknis (misal: setahun terakhir/sebulan terakhir)", "c) Perkiraan 5 tahun ke depan", "d) Bebas tergantung kemauan responden"]
+            )
+            q2_7 = st.radio(
+                "9. [Soal 2.7] Apa yang harus dilakukan petugas jika koordinat GPS yang ditangkap aplikasi belum akurat/presisi?",
+                ["a) Mematikan HP dan pulang", "b) Berada di area terbuka di titik lokasi usaha dan menunggu hingga indikator GPS akurat", "c) Mengisi titik koordinat secara manual dari tempat lain", "d) Mengosongkan data koordinat"]
+            )
+            q2_8 = st.radio(
+                "10. [Soal 2.8] Mengapa persetujuan dan partisipasi responden sangat penting dalam pendataan SE2026?",
+                ["a) Agar petugas bisa cepat selesai", "b) Untuk menjamin keakuratan dan kualitas data statistik nasional", "c) Untuk pembagian hadiah dari petugas", "d) Hanya untuk formalitas laporan"]
+            )
+            q2_9 = st.radio(
+                "11. [Soal 2.9] Jika terdapat perbedaan data antara keterangan ketua RT dengan kondisi riil di lapangan, informasi mana yang digunakan?",
+                ["a) Keterangan ketua RT tanpa verifikasi", "b) Hasil verifikasi dan konfirmasi langsung di lapangan", "c) Menggunakan data tahun lalu", "d) Dibiarkan kosong"]
+            )
+            q2_10 = st.radio(
+                "12. [Soal 2.10] Sebelum melakukan finalisasi/submit data dokumen pada aplikasi pendataan, tindakan apa yang wajib dilakukan PPL?",
+                ["a) Memeriksa kembali seluruh rincian jawaban agar tidak ada yang terlewat (validasi mandiri)", "b) Langsung mematikan aplikasi", "c) Mengubah jawaban responden sesuai keinginan sendiri", "d) Menghapus cache aplikasi tanpa kirim data"]
+            )
+
+            submit_kuis2 = st.form_submit_button("📤 Kirim Jawaban Kuis Hari 2")
+
             if submit_kuis2:
                 if nama_kuis and id_kuis:
                     skor = 0
-                    if q1 == "Melakukan teknik estimasi pendekatan pendapatan/pengeluaran": skor += 50
-                    if q2 == "Pindah / Tidak Ditemukan": skor += 50
-                    
+                    total_soal = 12
+                    bobot = 100 / total_soal
+
+                    if q2_ex1.startswith("a)"): skor += bobot
+                    if q2_ex2.startswith("b)"): skor += bobot
+                    if q2_1.startswith("a)"): skor += bobot
+                    if q2_2.startswith("b)"): skor += bobot
+                    if q2_3.startswith("b)"): skor += bobot
+                    if q2_4.startswith("a)"): skor += bobot
+                    if q2_5.startswith("a)"): skor += bobot
+                    if q2_6.startswith("b)"): skor += bobot
+                    if q2_7.startswith("b)"): skor += bobot
+                    if q2_8.startswith("b)"): skor += bobot
+                    if q2_9.startswith("b)"): skor += bobot
+                    if q2_10.startswith("a)"): skor += bobot
+
+                    skor_akhir = round(skor)
+                    status_lulus = "LULUS" if skor_akhir >= 70 else "TIDAK LULUS"
+                    waktu_selesai = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+
+                    # Kirim data ke Google Sheets
+                    payload_kuis = {
+                        "type": "kuis",
+                        "waktu_selesai": waktu_selesai,
+                        "nama": nama_kuis,
+                        "id_petugas": id_kuis,
+                        "kab_kota": kab_kota_kuis,
+                        "jenis_kuis": "Kuis Hari 2",
+                        "skor": skor_akhir,
+                        "status": status_lulus
+                    }
+                    try:
+                        requests.post(WEB_APP_URL, json=payload_kuis)
+                    except Exception as e:
+                        pass
+
                     st.balloons()
-                    st.success(f"🎉 Kuis Berhasil Dikirim! Skor Anda: **{skor} / 100**")
+                    st.success(f"🎉 Selamat **{nama_kuis}**, kuis Hari 2 telah terkirim dan tersimpan ke Google Sheets!")
+                    st.metric(label="Nilai Akhir Kuis Hari 2", value=f"{skor_akhir} / 100")
+                    if skor_akhir >= 70:
+                        st.info("🏆 **Status:** LULUS Evaluasi Hari 2")
+                    else:
+                        st.warning("⚠️ **Status:** Belum Memenuhi Nilai Kelulusan Minimal (70). Pelajari kembali materi Hari 2.")
                 else:
-                    st.error("❌ Harap isi Nama dan ID Petugas.")
+                    st.error("❌ Harap isi Nama dan ID Petugas sebelum mengirimkan kuis.")
 
 # Footer Teks Sederhana
 st.divider()
