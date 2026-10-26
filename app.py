@@ -1,6 +1,5 @@
 import streamlit as st
 import pandas as pd
-from datetime import datetime
 
 # ---------------------------------------------------------
 # 1. KONFIGURASI HALAMAN
@@ -71,7 +70,7 @@ if menu == "🏠 Homepage":
         #### 📌 Alur Pelatihan (2 Hari):
         1. **Mempelajari Jadwal & Materi:** Unduh pedoman dan paparan materi di menu yang tersedia.
         2. **Mengisi Absensi:** Wajib dilakukan setiap hari pada menu **Absensi Harian**.
-        3. **Mengerjakan Kuis Asynchronous:** Selesaikan kuis evaluasi Harian 1 & Harian 2 untuk mengukur pemahaman Anda.
+        3. **Mengerjakan Kuis Asynchronous:** Selesaikan kuis evaluasi Hari 1 & Hari 2 untuk mengukur pemahaman Anda.
         """)
         
         st.info("🔔 **Pengumuman:** Pastikan koneksi internet stabil saat mengunduh materi dan mengerjakan kuis Asynchronous.")
@@ -79,7 +78,7 @@ if menu == "🏠 Homepage":
     with col2:
         st.markdown("### 📊 Ringkasan Pelatihan")
         st.metric(label="Durasi Pelatihan", value="2 Hari (Asynchronous)")
-        st.metric(label="Pelaksanaan", value="23 - 24 Sept 2026")
+        st.metric(label="Metode", value="Mandiri / MOOC")
         st.metric(label="Status Pendaftaran", value="Aktif", delta="Terverifikasi")
 
 # ---------------------------------------------------------
@@ -87,12 +86,11 @@ if menu == "🏠 Homepage":
 # ---------------------------------------------------------
 elif menu == "📅 Jadwal MOOC (2 Hari)":
     st.title("📅 Jadwal Pelatihan MOOC PES SE2026")
-    st.caption("Jadwal Pelaksanaan Mandiri (Asynchronous) | 23 - 24 September 2026")
+    st.caption("Jadwal Pelaksanaan Mandiri (Asynchronous) 2 Hari Pelatihan")
     st.write("Silakan cermati struktur jadwal pembelajaran mandiri berikut:")
 
-    tab1, tab2 = st.tabs(["📌 Hari 1 (23 September 2026)", "📌 Hari 2 (24 September 2026)"])
+    tab1, tab2 = st.tabs(["📌 Hari 1", "📌 Hari 2"])
 
-    # Data Jadwal Hari 1
     jadwal_hari1 = [
         {"Waktu (WIB)": "08.00 - 08.30", "Sesi": "Sesi 1", "Materi / Kegiatan": "Penjelasan Umum & Organisasi Lapangan PES SE2026", "Durasi": "30 Menit"},
         {"Waktu (WIB)": "08.30 - 09.15", "Sesi": "Sesi 2", "Materi / Kegiatan": "Metodologi & Mekanisme Pencacahan Lapangan", "Durasi": "45 Menit"},
@@ -101,10 +99,9 @@ elif menu == "📅 Jadwal MOOC (2 Hari)":
         {"Waktu (WIB)": "11.00 - 11.45", "Sesi": "Sesi 4", "Materi / Kegiatan": "Tata Cara Bertanya & Teknik Wawancara Responden", "Durasi": "45 Menit"},
         {"Waktu (WIB)": "11.45 - 13.00", "Sesi": "ISHOMA", "Materi / Kegiatan": "Istirahat, Sholat, & Pengisian Absensi Hari 1", "Durasi": "75 Menit"},
         {"Waktu (WIB)": "13.00 - 15.00", "Sesi": "Sesi 5", "Materi / Kegiatan": "Pencacahan E-Form PES.SE2026.L dan L.UB", "Durasi": "120 Menit"},
-        {"Waktu (WIB)": "15.00 - 16.30", "Sesi": "Sesi 6", "Materi / Kegiatan": "Pengerjaan Tugas Asynchronous 1 & Kuis Hari 1", "Durasi": "90 Menit"}
+        {"Waktu (WIB)": "15.00 - 16.30", "Sesi": "Sesi 6", "Materi / Kegiatan": "Pengerjaan Kuis Asynchronous Hari 1", "Durasi": "90 Menit"}
     ]
 
-    # Data Jadwal Hari 2
     jadwal_hari2 = [
         {"Waktu (WIB)": "08.00 - 09.30", "Sesi": "Sesi 1", "Materi / Kegiatan": "Pengawasan, Pemeriksaan, & Penjaminan Kualitas Data", "Durasi": "90 Menit"},
         {"Waktu (WIB)": "09.30 - 11.00", "Sesi": "Sesi 2", "Materi / Kegiatan": "Penanganan Kasus Batas (Boundary Cases) Lapangan", "Durasi": "90 Menit"},
@@ -113,47 +110,54 @@ elif menu == "📅 Jadwal MOOC (2 Hari)":
         {"Waktu (WIB)": "12.15 - 13.30", "Sesi": "ISHOMA", "Materi / Kegiatan": "Istirahat, Sholat, & Pengisian Absensi Hari 2", "Durasi": "75 Menit"},
         {"Waktu (WIB)": "13.30 - 14.30", "Sesi": "Sesi 4", "Materi / Kegiatan": "Rekonsiliasi Lapangan (E-Form RL)", "Durasi": "60 Menit"},
         {"Waktu (WIB)": "14.30 - 15.15", "Sesi": "Sesi 5", "Materi / Kegiatan": "Pendalaman & Penegasan Materi PES SE2026", "Durasi": "45 Menit"},
-        {"Waktu (WIB)": "15.15 - 16.30", "Sesi": "Sesi 6", "Materi / Kegiatan": "Pengerjaan Tugas Asynchronous 2 & Post Test", "Durasi": "75 Menit"}
+        {"Waktu (WIB)": "15.15 - 16.30", "Sesi": "Sesi 6", "Materi / Kegiatan": "Pengerjaan Kuis Asynchronous Hari 2", "Durasi": "75 Menit"}
     ]
 
     with tab1:
-        st.subheader("📋 Tabel Jadwal — Hari 1 (Rabu, 23 September 2026)")
+        st.subheader("📋 Tabel Jadwal — Hari 1")
         df_h1 = pd.DataFrame(jadwal_hari1)
         st.dataframe(df_h1, use_container_width=True, hide_index=True)
 
     with tab2:
-        st.subheader("📋 Tabel Jadwal — Hari 2 (Kamis, 24 September 2026)")
+        st.subheader("📋 Tabel Jadwal — Hari 2")
         df_h2 = pd.DataFrame(jadwal_hari2)
         st.dataframe(df_h2, use_container_width=True, hide_index=True)
 
 # ---------------------------------------------------------
-# 3. BAHAN & MATERI
+# 3. BAHAN & MATERI (3 BAGIAN DENGAN LINK KHUSUS)
 # ---------------------------------------------------------
 elif menu == "📂 Bahan & Materi":
-    st.title("📂 Bahan & Materi Pelatihan")
-    st.write("Unduh bahan pustaka dan materi paparan resmi di bawah ini:")
+    st.title("📂 Bahan & Materi Pelatihan PES SE2026")
+    st.write("Silakan akses dan unduh dokumen pustaka pelatihan resmi di bawah ini:")
 
-    col_mat1, col_mat2 = st.columns(2)
+    # Bagian 1: Buku Pedoman
+    st.subheader("1. 📖 Buku Pedoman")
+    st.markdown("""
+    * **Buku 1 Pedoman Teknis PES SE2026** — [📄 Akses / Unduh File](https://drive.google.com/file/d/1tXg_Lk232xKc3Lr6R52H3JLAkN0YS_4j/view?usp=drivesdk)
+    * **Buku 2 Pedoman Innas PES SE2026** — [📄 Akses / Unduh File](https://drive.google.com/file/d/1xDsrcrRmA9KQPxerE2if6bwoEvcymnom/view?usp=drivesdk)
+    * **Buku 3 Pedoman Pemeriksa PES SE2026** — [📄 Akses / Unduh File](https://drive.google.com/file/d/1VGoGgHk0_ikOdNUnYC1BVvHo_Mmb0z45/view?usp=drivesdk)
+    """)
 
-    with col_mat1:
-        st.subheader("📖 Buku Pedoman")
-        st.markdown("""
-        * **Pedoman Umum Petugas PES SE2026**
-          * *Deskripsi:* Panduan lengkap tata tertib, tugas, dan tanggung jawab petugas.
-          * [📄 Unduh Pedoman Umum (PDF)](https://example.com/pedoman-umum.pdf)
-        * **Pedoman Konsep & Definisi Lapangan**
-          * *Deskripsi:* Penjelasan variabel kuesioner dan batasan sektor usaha.
-          * [📄 Unduh Pedoman Kondef (PDF)](https://example.com/pedoman-kondef.pdf)
-        """)
+    st.divider()
 
-    with col_mat2:
-        st.subheader("🖥️ Slide Paparan Materi")
-        st.markdown("""
-        * **Materi Hari 1: Metodologi & Konsep Usaha**
-          * [📊 Unduh Slide Hari 1 (PPTX/PDF)](https://example.com/materi-hari-1.pdf)
-        * **Materi Hari 2: Identifikasi & Tata Cara Wawancara**
-          * [📊 Unduh Slide Hari 2 (PPTX/PDF)](https://example.com/materi-hari-2.pdf)
-        """)
+    # Bagian 2: Bahan Ajar
+    st.subheader("2. 🖥️ Bahan Ajar / Slide Paparan")
+    st.markdown("""
+    Akses seluruh slide paparan materi pelatihan (PowerPoint & PDF) melalui link utama berikut:
+    
+    👉 **[📂 Folder Utama Bahan Ajar & Slide Paparan PES SE2026](https://drive.google.com/drive/folders/1mL0bUSazXbfNwDRAS1NQsykPIaZ4q-FJ)**
+    """)
+
+    st.divider()
+
+    # Bagian 3: Kuesioner
+    st.subheader("3. 📋 Kuesioner & Instrumen Lapangan")
+    st.markdown("""
+    * **Kuesioner PES SE2026-L.UB** — [📄 Akses / Unduh File](https://drive.google.com/file/d/1SyMtU1KNmdlfLyXkLMM4fqLil52nMWyW/view?usp=drivesdk)
+    * **Kuesioner PES.SE2026-RLK** — [📄 Akses / Unduh File](https://drive.google.com/file/d/1VtbdUEfdYaU2vWRSqHotjAMxJV_z53NH/view?usp=drivesdk)
+    * **Kuesioner PES.SE2026-RLU** — [📄 Akses / Unduh File](https://drive.google.com/file/d/1ZV52vwxlao9HL-RHuvwdka3bAtG7U8aO/view?usp=drivesdk)
+    * **Kuesioner PES.SE2026-RLAK** — [📄 Akses / Unduh File](https://drive.google.com/file/d/18mOfU_mJa0jJavsXfGTq3b5vXG80bEyI/view?usp=drivesdk)
+    """)
 
 # ---------------------------------------------------------
 # 4. ABSENSI HARIAN
@@ -166,7 +170,7 @@ elif menu == "📝 Absensi Harian":
         nama = st.text_input("Nama Lengkap Petugas *")
         id_petugas = st.text_input("ID Petugas / NIP *")
         kab_kota = st.selectbox("Kabupaten/Kota Tugas", ["Kota Bandung", "Kab. Garut", "Kab. Subang", "Kab. Tasikmalaya", "Lainnya"])
-        hari_absensi = st.selectbox("Absensi Untuk Hari Ke-", ["Hari 1 (23 Sept)", "Hari 2 (24 Sept)"])
+        hari_absensi = st.selectbox("Absensi Untuk Hari Ke-", ["Hari 1", "Hari 2"])
         catatan = st.text_area("Catatan / Kendala Harian (Opsional)")
         
         submit_absensi = st.form_submit_button("Kirim Absensi Kehadiran")
@@ -187,7 +191,7 @@ elif menu == "✏️ Kuis Asynchronous":
     pilihan_kuis = st.radio("Pilih Kuis:", ["Kuis Hari 1: Metodologi & Pencacahan", "Kuis Hari 2: Pengawasan & CAPI"], horizontal=True)
 
     if pilihan_kuis == "Kuis Hari 1: Metodologi & Pencacahan":
-        st.subheader("📝 Kuis Hari 1 (23 September 2026)")
+        st.subheader("📝 Kuis Hari 1")
         with st.form("kuis_hari_1"):
             nama_kuis = st.text_input("Nama Lengkap *")
             id_kuis = st.text_input("ID Petugas *")
@@ -215,7 +219,7 @@ elif menu == "✏️ Kuis Asynchronous":
                     st.error("❌ Harap isi Nama dan ID Petugas.")
 
     elif pilihan_kuis == "Kuis Hari 2: Pengawasan & CAPI":
-        st.subheader("📝 Kuis Hari 2 (24 September 2026)")
+        st.subheader("📝 Kuis Hari 2")
         with st.form("kuis_hari_2"):
             nama_kuis = st.text_input("Nama Lengkap *")
             id_kuis = st.text_input("ID Petugas *")
