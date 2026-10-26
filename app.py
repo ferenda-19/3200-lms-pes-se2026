@@ -37,7 +37,7 @@ st.markdown("""
 # URL GOOGLE APPS SCRIPT WEB APP & SPREADSHEET CSV READ
 # ---------------------------------------------------------
 # Paste URL Web App dari Apps Script di bawah ini:
-WEB_APP_URL = "https://script.google.com/macros/s/AKfycb.../exec"  # <--- GANTI LINK INI
+WEB_APP_URL = "https://script.google.com/macros/s/AKfycbzYa8RO_pIuticf6xT7JNz-3gB62_pH0iGlyDtZ5rbZu4IQ0uIPqxUlZjKKPvKxZCL6/exec"  # <--- GANTI LINK INI
 
 # Link CSV untuk membaca data publik spreadsheet secara langsung:
 SPREADSHEET_ID = "1JOudkfgyJrlc2iTlsKofHNja3Xkn2NgLV4D1k-_9jd4"
