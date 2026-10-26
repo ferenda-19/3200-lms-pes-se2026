@@ -1,5 +1,6 @@
 import streamlit as st
 import pandas as pd
+from datetime import datetime
 
 # ---------------------------------------------------------
 # 1. KONFIGURASI HALAMAN
@@ -11,11 +12,11 @@ st.set_page_config(
     initial_sidebar_state="expanded"
 )
 
-# Custom Styling CSS (Kontras Tinggi & Responsif)
+# Custom Styling CSS (Kontras Tinggi & Warna Judul Konsisten)
 st.markdown("""
     <style>
     .main-title {
-        color: #FBBF24;
+        color: #FBBF24; /* Warna Kuning Terang Konsisten untuk Semua Judul Halaman */
         font-size: 2.2rem;
         font-weight: bold;
         text-align: center;
@@ -30,6 +31,19 @@ st.markdown("""
     }
     </style>
 """, unsafe_allow_html=True)
+
+# Initialize Session State untuk Penyimpanan Absensi jika belum ada
+if "data_absensi" not in st.session_state:
+    st.session_state.data_absensi = [
+        {
+            "Waktu Absen": "2026-09-23 08:05:12",
+            "Nama Lengkap": "Budi Santoso",
+            "ID Petugas / NIP": "320400123",
+            "Kabupaten/Kota": "Kota Bandung",
+            "Hari Absensi": "Hari 1",
+            "Catatan": "Hadir tepat waktu"
+        }
+    ]
 
 # ---------------------------------------------------------
 # NAVIGATION / SIDEBAR
@@ -82,12 +96,12 @@ if menu == "🏠 Homepage":
         st.metric(label="Status Pendaftaran", value="Aktif", delta="Terverifikasi")
 
 # ---------------------------------------------------------
-# 2. JADWAL MOOC (2 HARI - TABEL DINAMIS)
+# 2. JADWAL MOOC (2 HARI)
 # ---------------------------------------------------------
 elif menu == "📅 Jadwal MOOC (2 Hari)":
-    st.title("📅 Jadwal Pelatihan MOOC PES SE2026")
-    st.caption("Jadwal Pelaksanaan Mandiri (Asynchronous) 2 Hari Pelatihan")
-    st.write("Silakan cermati struktur jadwal pembelajaran mandiri berikut:")
+    st.markdown("<div class='main-title'>📅 Jadwal Pelatihan MOOC PES SE2026</div>", unsafe_allow_html=True)
+    st.markdown("<div class='sub-title'>Jadwal Pelaksanaan Mandiri (Asynchronous) 2 Hari Pelatihan</div>", unsafe_allow_html=True)
+    st.divider()
 
     tab1, tab2 = st.tabs(["📌 Hari 1", "📌 Hari 2"])
 
@@ -124,13 +138,13 @@ elif menu == "📅 Jadwal MOOC (2 Hari)":
         st.dataframe(df_h2, use_container_width=True, hide_index=True)
 
 # ---------------------------------------------------------
-# 3. BAHAN & MATERI (3 BAGIAN DENGAN LINK KHUSUS)
+# 3. BAHAN & MATERI
 # ---------------------------------------------------------
 elif menu == "📂 Bahan & Materi":
-    st.title("📂 Bahan & Materi Pelatihan PES SE2026")
-    st.write("Silakan akses dan unduh dokumen pustaka pelatihan resmi di bawah ini:")
+    st.markdown("<div class='main-title'>📂 Bahan & Materi Pelatihan PES SE2026</div>", unsafe_allow_html=True)
+    st.markdown("<div class='sub-title'>Unduh dan Pelajari Pustaka Resmi Pelatihan Mandiri (MOOC)</div>", unsafe_allow_html=True)
+    st.divider()
 
-    # Bagian 1: Buku Pedoman
     st.subheader("1. 📖 Buku Pedoman")
     st.markdown("""
     * **Buku 1 Pedoman Teknis PES SE2026** — [📄 Akses / Unduh File](https://drive.google.com/file/d/1tXg_Lk232xKc3Lr6R52H3JLAkN0YS_4j/view?usp=drivesdk)
@@ -140,7 +154,6 @@ elif menu == "📂 Bahan & Materi":
 
     st.divider()
 
-    # Bagian 2: Bahan Ajar
     st.subheader("2. 🖥️ Bahan Ajar / Slide Paparan")
     st.markdown("""
     Akses seluruh slide paparan materi pelatihan (PowerPoint & PDF) melalui link utama berikut:
@@ -150,9 +163,9 @@ elif menu == "📂 Bahan & Materi":
 
     st.divider()
 
-    # Bagian 3: Kuesioner
     st.subheader("3. 📋 Kuesioner & Instrumen Lapangan")
     st.markdown("""
+    * **Kuesioner PES SE2026-L** — [📄 Akses / Unduh File](https://drive.google.com/file/d/1B6ds_IlmN03IJo9JuLAh6k1gvF6kR0eo/view?usp=drivesdk)
     * **Kuesioner PES SE2026-L.UB** — [📄 Akses / Unduh File](https://drive.google.com/file/d/1SyMtU1KNmdlfLyXkLMM4fqLil52nMWyW/view?usp=drivesdk)
     * **Kuesioner PES.SE2026-RLK** — [📄 Akses / Unduh File](https://drive.google.com/file/d/1VtbdUEfdYaU2vWRSqHotjAMxJV_z53NH/view?usp=drivesdk)
     * **Kuesioner PES.SE2026-RLU** — [📄 Akses / Unduh File](https://drive.google.com/file/d/1ZV52vwxlao9HL-RHuvwdka3bAtG7U8aO/view?usp=drivesdk)
@@ -160,33 +173,102 @@ elif menu == "📂 Bahan & Materi":
     """)
 
 # ---------------------------------------------------------
-# 4. ABSENSI HARIAN
+# 4. ABSENSI HARIAN (DENGAN DAFTAR KAB/KOTA TITLE CASE LENGKAP)
 # ---------------------------------------------------------
 elif menu == "📝 Absensi Harian":
-    st.title("📝 Form Absensi Kehadiran Petugas")
-    st.write("Isi formulir kehadiran ini pada setiap hari pelaksanaan MOOC.")
+    st.markdown("<div class='main-title'>📝 Form Absensi Kehadiran Petugas</div>", unsafe_allow_html=True)
+    st.markdown("<div class='sub-title'>Silakan Isi Formulir Kehadiran pada Setiap Hari Pelaksanaan MOOC</div>", unsafe_allow_html=True)
+    st.divider()
 
-    with st.form(key="form_absensi"):
-        nama = st.text_input("Nama Lengkap Petugas *")
-        id_petugas = st.text_input("ID Petugas / NIP *")
-        kab_kota = st.selectbox("Kabupaten/Kota Tugas", ["Kota Bandung", "Kab. Garut", "Kab. Subang", "Kab. Tasikmalaya", "Lainnya"])
-        hari_absensi = st.selectbox("Absensi Untuk Hari Ke-", ["Hari 1", "Hari 2"])
-        catatan = st.text_area("Catatan / Kendala Harian (Opsional)")
+    tab_peserta, tab_panitia = st.tabs(["✍️ Form Absensi Petugas", "📊 Rekap Absensi (Khusus Panitia)"])
+
+    daftar_kab_kota = [
+        "Kabupaten Bogor",
+        "Kabupaten Sukabumi",
+        "Kabupaten Cianjur",
+        "Kabupaten Bandung",
+        "Kabupaten Garut",
+        "Kabupaten Tasikmalaya",
+        "Kabupaten Ciamis",
+        "Kabupaten Kuningan",
+        "Kabupaten Cirebon",
+        "Kabupaten Majalengka",
+        "Kabupaten Sumedang",
+        "Kabupaten Indramayu",
+        "Kabupaten Subang",
+        "Kabupaten Purwakarta",
+        "Kabupaten Karawang",
+        "Kabupaten Bekasi",
+        "Kabupaten Bandung Barat",
+        "Kabupaten Pangandaran",
+        "Kota Bogor",
+        "Kota Sukabumi",
+        "Kota Bandung",
+        "Kota Cirebon",
+        "Kota Bekasi",
+        "Kota Depok",
+        "Kota Cimahi",
+        "Kota Tasikmalaya",
+        "Kota Banjar"
+    ]
+
+    with tab_peserta:
+        st.subheader("Formulir Presensi Harian")
+        with st.form(key="form_absensi"):
+            nama = st.text_input("Nama Lengkap Petugas *")
+            id_petugas = st.text_input("ID Petugas / NIP *")
+            kab_kota = st.selectbox("Kabupaten/Kota Tugas *", daftar_kab_kota)
+            hari_absensi = st.selectbox("Absensi Untuk Hari Ke- *", ["Hari 1", "Hari 2"])
+            catatan = st.text_area("Catatan / Kendala Harian (Opsional)")
+            
+            submit_absensi = st.form_submit_button("Kirim Absensi Kehadiran")
+
+        if submit_absensi:
+            if nama and id_petugas:
+                waktu_sekarang = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+                # Simpan data ke session state
+                st.session_state.data_absensi.append({
+                    "Waktu Absen": waktu_sekarang,
+                    "Nama Lengkap": nama,
+                    "ID Petugas / NIP": id_petugas,
+                    "Kabupaten/Kota": kab_kota,
+                    "Hari Absensi": hari_absensi,
+                    "Catatan": catatan if catatan else "-"
+                })
+                st.success(f"✅ Terima kasih **{nama}**, absensi **{hari_absensi}** berhasil dicatat pada {waktu_sekarang}!")
+            else:
+                st.error("❌ Harap isi Nama dan ID Petugas sebelum mengirimkan absensi.")
+
+    with tab_panitia:
+        st.subheader("🔒 Akses Panitia & Rekap Kehadiran")
+        pin_panitia = st.text_input("Masukkan PIN Akses Panitia:", type="password")
         
-        submit_absensi = st.form_submit_button("Kirim Absensi Kehadiran")
-
-    if submit_absensi:
-        if nama and id_petugas:
-            st.success(f"✅ Terima kasih {nama}, absensi {hari_absensi} berhasil dicatat!")
-        else:
-            st.error("❌ Harap isi Nama dan ID Petugas sebelum mengirimkan absensi.")
+        # PIN Sederhana Panitia: 3200
+        if pin_panitia == "3200":
+            st.success("🔓 Akses Panitia Diterima.")
+            df_rekap = pd.DataFrame(st.session_state.data_absensi)
+            
+            st.write(f"Total Kehadiran Tercatat: **{len(df_rekap)} Peserta**")
+            st.dataframe(df_rekap, use_container_width=True, hide_index=True)
+            
+            # Tombol Download Excel/CSV
+            csv_data = df_rekap.to_csv(index=False).encode('utf-8')
+            st.download_button(
+                label="📥 Download Rekap Absensi (CSV / Excel)",
+                data=csv_data,
+                file_name=f"Rekap_Absensi_PES_SE2026_{datetime.now().strftime('%Y%m%d')}.csv",
+                mime="text/csv"
+            )
+        elif pin_panitia != "":
+            st.error("❌ PIN Akses Salah! Gunakan PIN **3200**.")
 
 # ---------------------------------------------------------
 # 5. KUIS ASYNCHRONOUS
 # ---------------------------------------------------------
 elif menu == "✏️ Kuis Asynchronous":
-    st.title("✏️ Kuis Evaluasi Asynchronous")
-    st.write("Pilih kuis harian yang ingin Anda kerjakan. Anda hanya dapat mengirimkan jawaban 1 kali.")
+    st.markdown("<div class='main-title'>✏️ Kuis Evaluasi Asynchronous</div>", unsafe_allow_html=True)
+    st.markdown("<div class='sub-title'>Uji Pemahaman Mandiri Hari 1 & Hari 2 (Kesempatan 1x Kirim)</div>", unsafe_allow_html=True)
+    st.divider()
 
     pilihan_kuis = st.radio("Pilih Kuis:", ["Kuis Hari 1: Metodologi & Pencacahan", "Kuis Hari 2: Pengawasan & CAPI"], horizontal=True)
 
