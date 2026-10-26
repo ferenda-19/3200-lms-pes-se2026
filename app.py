@@ -246,16 +246,33 @@ elif menu == "📝 Absensi Harian":
             st.success("🔓 Akses Panitia Diterima.")
             df_rekap = load_data_absensi()
             
-            st.write(f"Total Kehadiran Tercatat: **{len(df_rekap)} Peserta**")
-            st.dataframe(df_rekap, use_container_width=True, hide_index=True)
-            
-            csv_data = df_rekap.to_csv(index=False).encode('utf-8')
-            st.download_button(
-                label="📥 Download Rekap Absensi (CSV / Excel)",
-                data=csv_data,
-                file_name=f"Rekap_Absensi_PES_SE2026_{datetime.now().strftime('%Y%m%d')}.csv",
-                mime="text/csv"
-            )
+            if not df_rekap.empty:
+                col_f1, col_f2 = st.columns(2)
+                with col_f1:
+                    opts_kab = ["Semua Kabupaten/Kota"] + sorted([str(x) for x in df_rekap["Kabupaten/Kota"].dropna().unique()]) if "Kabupaten/Kota" in df_rekap.columns else ["Semua Kabupaten/Kota"]
+                    filter_kab = st.selectbox("Filter Kabupaten/Kota:", opts_kab, key="filter_kab_absen")
+                with col_f2:
+                    opts_hari = ["Semua Hari"] + sorted([str(x) for x in df_rekap["Hari Absensi"].dropna().unique()]) if "Hari Absensi" in df_rekap.columns else ["Semua Hari"]
+                    filter_hari = st.selectbox("Filter Hari Absensi:", opts_hari, key="filter_hari_absen")
+
+                df_filtered = df_rekap.copy()
+                if "Kabupaten/Kota" in df_filtered.columns and filter_kab != "Semua Kabupaten/Kota":
+                    df_filtered = df_filtered[df_filtered["Kabupaten/Kota"] == filter_kab]
+                if "Hari Absensi" in df_filtered.columns and filter_hari != "Semua Hari":
+                    df_filtered = df_filtered[df_filtered["Hari Absensi"] == filter_hari]
+
+                st.write(f"Total Kehadiran Tercatat: **{len(df_filtered)} Peserta** (dari total {len(df_rekap)} data)")
+                st.dataframe(df_filtered, use_container_width=True, hide_index=True)
+                
+                csv_data = df_filtered.to_csv(index=False).encode('utf-8')
+                st.download_button(
+                    label="📥 Download Rekap Absensi (CSV / Excel)",
+                    data=csv_data,
+                    file_name=f"Rekap_Absensi_PES_SE2026_{datetime.now().strftime('%Y%m%d')}.csv",
+                    mime="text/csv"
+                )
+            else:
+                st.info("Belum ada data absensi yang tersimpan.")
         elif pin_panitia != "":
             st.error("❌ PIN Akses Salah! Gunakan PIN **3200**.")
 
@@ -557,7 +574,7 @@ elif menu == "✏️ Kuis Asynchronous":
                         st.error("❌ Harap isi Nama dan ID Petugas sebelum mengirimkan kuis.")
 
     # ---------------------------------------------------------
-    # TAB REKAP NILAI KUIS (KHUSUS PANITIA)
+    # TAB REKAP NILAI KUIS (KHUSUS PANITIA DENGAN FILTER)
     # ---------------------------------------------------------
     with tab_kuis_panitia:
         st.subheader("🔒 Akses Panitia & Rekap Nilai Kuis Real-Time")
@@ -567,16 +584,33 @@ elif menu == "✏️ Kuis Asynchronous":
             st.success("🔓 Akses Panitia Diterima.")
             df_rekap_kuis = load_data_kuis()
             
-            st.write(f"Total Pengerjaan Kuis Tercatat: **{len(df_rekap_kuis)} Peserta**")
-            st.dataframe(df_rekap_kuis, use_container_width=True, hide_index=True)
-            
-            csv_data_kuis = df_rekap_kuis.to_csv(index=False).encode('utf-8')
-            st.download_button(
-                label="📥 Download Rekap Nilai Kuis (CSV / Excel)",
-                data=csv_data_kuis,
-                file_name=f"Rekap_Nilai_Kuis_PES_SE2026_{datetime.now().strftime('%Y%m%d')}.csv",
-                mime="text/csv"
-            )
+            if not df_rekap_kuis.empty:
+                col_kf1, col_kf2 = st.columns(2)
+                with col_kf1:
+                    opts_kab_k = ["Semua Kabupaten/Kota"] + sorted([str(x) for x in df_rekap_kuis["Kabupaten/Kota"].dropna().unique()]) if "Kabupaten/Kota" in df_rekap_kuis.columns else ["Semua Kabupaten/Kota"]
+                    filter_kab_k = st.selectbox("Filter Kabupaten/Kota:", opts_kab_k, key="filter_kab_kuis")
+                with col_kf2:
+                    opts_jenis_k = ["Semua Kuis"] + sorted([str(x) for x in df_rekap_kuis["Jenis Kuis"].dropna().unique()]) if "Jenis Kuis" in df_rekap_kuis.columns else ["Semua Kuis"]
+                    filter_jenis_k = st.selectbox("Filter Jenis Kuis / Hari:", opts_jenis_k, key="filter_jenis_kuis")
+
+                df_filtered_kuis = df_rekap_kuis.copy()
+                if "Kabupaten/Kota" in df_filtered_kuis.columns and filter_kab_k != "Semua Kabupaten/Kota":
+                    df_filtered_kuis = df_filtered_kuis[df_filtered_kuis["Kabupaten/Kota"] == filter_kab_k]
+                if "Jenis Kuis" in df_filtered_kuis.columns and filter_jenis_k != "Semua Kuis":
+                    df_filtered_kuis = df_filtered_kuis[df_filtered_kuis["Jenis Kuis"] == filter_jenis_k]
+
+                st.write(f"Total Pengerjaan Kuis Tercatat: **{len(df_filtered_kuis)} Peserta** (dari total {len(df_rekap_kuis)} data)")
+                st.dataframe(df_filtered_kuis, use_container_width=True, hide_index=True)
+                
+                csv_data_kuis = df_filtered_kuis.to_csv(index=False).encode('utf-8')
+                st.download_button(
+                    label="📥 Download Rekap Nilai Kuis (CSV / Excel)",
+                    data=csv_data_kuis,
+                    file_name=f"Rekap_Nilai_Kuis_PES_SE2026_{datetime.now().strftime('%Y%m%d')}.csv",
+                    mime="text/csv"
+                )
+            else:
+                st.info("Belum ada data kuis yang tersimpan.")
         elif pin_panitia_kuis != "":
             st.error("❌ PIN Akses Salah! Gunakan PIN **3200**.")
 
