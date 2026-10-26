@@ -48,10 +48,7 @@ if "data_absensi" not in st.session_state:
 # ---------------------------------------------------------
 # NAVIGATION / SIDEBAR
 # ---------------------------------------------------------
-# Replacing icon with Official BPS / SE2026 Logo URL
-LOGO_BPS_URL = "https://upload.wikimedia.org/wikipedia/commons/thumb/b/bd/LOGO-BPS.png/800px-LOGO-BPS.png"
-
-st.sidebar.image(LOGO_BPS_URL, width=90)
+st.sidebar.image("https://img.icons8.com/color/96/000000/google-classroom.png", width=80)
 st.sidebar.title("MOOC PES SE2026")
 st.sidebar.caption("Sensus Ekonomi 2026 - BPS Provinsi Jawa Barat")
 
@@ -176,7 +173,7 @@ elif menu == "📂 Bahan & Materi":
     """)
 
 # ---------------------------------------------------------
-# 4. ABSENSI HARIAN
+# 4. ABSENSI HARIAN (DENGAN DAFTAR KAB/KOTA TITLE CASE LENGKAP)
 # ---------------------------------------------------------
 elif menu == "📝 Absensi Harian":
     st.markdown("<div class='main-title'>📝 Form Absensi Kehadiran Petugas</div>", unsafe_allow_html=True)
