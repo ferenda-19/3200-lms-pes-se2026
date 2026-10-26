@@ -1,6 +1,7 @@
 import streamlit as st
 import pandas as pd
 from datetime import datetime
+from streamlit_gsheets import GSheetsConnection
 
 # ---------------------------------------------------------
 # 1. KONFIGURASI HALAMAN
@@ -32,18 +33,22 @@ st.markdown("""
     </style>
 """, unsafe_allow_html=True)
 
-# Initialize Session State untuk Penyimpanan Absensi jika belum ada
-if "data_absensi" not in st.session_state:
-    st.session_state.data_absensi = [
-        {
-            "Waktu Absen": "2026-09-23 08:05:12",
-            "Nama Lengkap": "Budi Santoso",
-            "ID Petugas / NIP": "320400123",
-            "Kabupaten/Kota": "Kota Bandung",
-            "Hari Absensi": "Hari 1",
-            "Catatan": "Hadir tepat waktu"
-        }
-    ]
+# ---------------------------------------------------------
+# KONEKSI GOOGLE SHEETS
+# ---------------------------------------------------------
+SPREADSHEET_URL = "https://docs.google.com/spreadsheets/d/1JOudkfgyJrlc2iTlsKofHNja3Xkn2NgLV4D1k-_9jd4/edit?usp=sharing"
+
+# Inisialisasi koneksi ke Google Sheets
+conn = st.connection("gsheets", type=GSheetsConnection)
+
+def load_data_absensi():
+    try:
+        # Membaca data absensi terkini dari Google Sheets
+        df = conn.read(spreadsheet=SPREADSHEET_URL, ttl="0")
+        return df.dropna(how="all")
+    except Exception as e:
+        st.error(f"Gagal memuat data dari Google Sheets: {e}")
+        return pd.DataFrame()
 
 # ---------------------------------------------------------
 # NAVIGATION / SIDEBAR
@@ -173,7 +178,7 @@ elif menu == "📂 Bahan & Materi":
     """)
 
 # ---------------------------------------------------------
-# 4. ABSENSI HARIAN (DENGAN DAFTAR KAB/KOTA TITLE CASE LENGKAP)
+# 4. ABSENSI HARIAN (LANGSUNG TERSIMPAN KE GOOGLE SHEETS)
 # ---------------------------------------------------------
 elif menu == "📝 Absensi Harian":
     st.markdown("<div class='main-title'>📝 Form Absensi Kehadiran Petugas</div>", unsafe_allow_html=True)
@@ -183,38 +188,18 @@ elif menu == "📝 Absensi Harian":
     tab_peserta, tab_panitia = st.tabs(["✍️ Form Absensi Petugas", "📊 Rekap Absensi (Khusus Panitia)"])
 
     daftar_kab_kota = [
-        "Kabupaten Bogor",
-        "Kabupaten Sukabumi",
-        "Kabupaten Cianjur",
-        "Kabupaten Bandung",
-        "Kabupaten Garut",
-        "Kabupaten Tasikmalaya",
-        "Kabupaten Ciamis",
-        "Kabupaten Kuningan",
-        "Kabupaten Cirebon",
-        "Kabupaten Majalengka",
-        "Kabupaten Sumedang",
-        "Kabupaten Indramayu",
-        "Kabupaten Subang",
-        "Kabupaten Purwakarta",
-        "Kabupaten Karawang",
-        "Kabupaten Bekasi",
-        "Kabupaten Bandung Barat",
-        "Kabupaten Pangandaran",
-        "Kota Bogor",
-        "Kota Sukabumi",
-        "Kota Bandung",
-        "Kota Cirebon",
-        "Kota Bekasi",
-        "Kota Depok",
-        "Kota Cimahi",
-        "Kota Tasikmalaya",
-        "Kota Banjar"
+        "Kabupaten Bogor", "Kabupaten Sukabumi", "Kabupaten Cianjur", "Kabupaten Bandung",
+        "Kabupaten Garut", "Kabupaten Tasikmalaya", "Kabupaten Ciamis", "Kabupaten Kuningan",
+        "Kabupaten Cirebon", "Kabupaten Majalengka", "Kabupaten Sumedang", "Kabupaten Indramayu",
+        "Kabupaten Subang", "Kabupaten Purwakarta", "Kabupaten Karawang", "Kabupaten Bekasi",
+        "Kabupaten Bandung Barat", "Kabupaten Pangandaran", "Kota Bogor", "Kota Sukabumi",
+        "Kota Bandung", "Kota Cirebon", "Kota Bekasi", "Kota Depok", "Kota Cimahi",
+        "Kota Tasikmalaya", "Kota Banjar"
     ]
 
     with tab_peserta:
         st.subheader("Formulir Presensi Harian")
-        with st.form(key="form_absensi"):
+        with st.form(key="form_absensi", clear_on_submit=True):
             nama = st.text_input("Nama Lengkap Petugas *")
             id_petugas = st.text_input("ID Petugas / NIP *")
             kab_kota = st.selectbox("Kabupaten/Kota Tugas *", daftar_kab_kota)
@@ -226,32 +211,37 @@ elif menu == "📝 Absensi Harian":
         if submit_absensi:
             if nama and id_petugas:
                 waktu_sekarang = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-                # Simpan data ke session state
-                st.session_state.data_absensi.append({
+                
+                new_row = pd.DataFrame([{
                     "Waktu Absen": waktu_sekarang,
                     "Nama Lengkap": nama,
                     "ID Petugas / NIP": id_petugas,
                     "Kabupaten/Kota": kab_kota,
                     "Hari Absensi": hari_absensi,
                     "Catatan": catatan if catatan else "-"
-                })
-                st.success(f"✅ Terima kasih **{nama}**, absensi **{hari_absensi}** berhasil dicatat pada {waktu_sekarang}!")
+                }])
+                
+                try:
+                    df_existing = load_data_absensi()
+                    df_updated = pd.concat([df_existing, new_row], ignore_index=True)
+                    conn.update(spreadsheet=SPREADSHEET_URL, data=df_updated)
+                    st.success(f"✅ Terima kasih **{nama}**, absensi **{hari_absensi}** berhasil tersimpan langsung ke Google Sheets pada {waktu_sekarang}!")
+                except Exception as e:
+                    st.error(f"❌ Gagal menyimpan absensi ke Google Sheets: {e}")
             else:
                 st.error("❌ Harap isi Nama dan ID Petugas sebelum mengirimkan absensi.")
 
     with tab_panitia:
-        st.subheader("🔒 Akses Panitia & Rekap Kehadiran")
+        st.subheader("🔒 Akses Panitia & Rekap Kehadiran Real-Time")
         pin_panitia = st.text_input("Masukkan PIN Akses Panitia:", type="password")
         
-        # PIN Sederhana Panitia: 3200
         if pin_panitia == "3200":
             st.success("🔓 Akses Panitia Diterima.")
-            df_rekap = pd.DataFrame(st.session_state.data_absensi)
+            df_rekap = load_data_absensi()
             
             st.write(f"Total Kehadiran Tercatat: **{len(df_rekap)} Peserta**")
             st.dataframe(df_rekap, use_container_width=True, hide_index=True)
             
-            # Tombol Download Excel/CSV
             csv_data = df_rekap.to_csv(index=False).encode('utf-8')
             st.download_button(
                 label="📥 Download Rekap Absensi (CSV / Excel)",
