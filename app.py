@@ -13,20 +13,20 @@ st.set_page_config(
 )
 
 # ---------------------------------------------------------
-# FUNGSI UNTUK MENAMPILKAN BANNER ATAS & FOOTER BAWAH
+# FUNGSI UNTUK MENAMPILKAN BANNER ATAS (H1) & FOOTER BAWAH (F1)
 # ---------------------------------------------------------
 def tampilkan_header_banner():
-    # Gambar ilustrasi header atas (memanjang kiri-kanan)
+    # Ilustrasi H1: Analisis Data & Ekonomi Digital
     st.image(
-        "https://images.unsplash.com/photo-1516321318423-f06f85e504b3?q=80&w=1200&auto=format&fit=crop",
+        "https://img.freepik.com/free-vector/flat-design-business-strategy-concept_23-2149175414.jpg",
         use_column_width=True
     )
 
 def tampilkan_footer_ilustrasi():
     st.divider()
-    # Hiasan gambar ilustrasi bawah agar tidak kosong
+    # Ilustrasi F1: Kolaborasi & Verifikasi Data
     st.image(
-        "https://images.unsplash.com/photo-1522071820081-009f0129c71c?q=80&w=1200&auto=format&fit=crop",
+        "https://img.freepik.com/free-vector/isometric-data-analysis-concept_23-2148168235.jpg",
         use_column_width=True
     )
     st.caption("© 2026 Badan Pusat Statistik — Post Enumeration Survey Sensus Ekonomi 2026")
