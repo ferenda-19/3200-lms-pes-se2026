@@ -12,25 +12,6 @@ st.set_page_config(
     initial_sidebar_state="expanded"
 )
 
-# ---------------------------------------------------------
-# FUNGSI UNTUK MENAMPILKAN BANNER ATAS (H1) & FOOTER BAWAH (F1)
-# ---------------------------------------------------------
-def tampilkan_header_banner():
-    # Ilustrasi H1: Analisis Data & Ekonomi Digital
-    st.image(
-        "https://img.freepik.com/free-vector/flat-design-business-strategy-concept_23-2149175414.jpg",
-        use_column_width=True
-    )
-
-def tampilkan_footer_ilustrasi():
-    st.divider()
-    # Ilustrasi F1: Kolaborasi & Verifikasi Data
-    st.image(
-        "https://img.freepik.com/free-vector/isometric-data-analysis-concept_23-2148168235.jpg",
-        use_column_width=True
-    )
-    st.caption("© 2026 Badan Pusat Statistik — Post Enumeration Survey Sensus Ekonomi 2026")
-
 # Custom Styling CSS (Kontras Tinggi & Responsif)
 st.markdown("""
     <style>
@@ -39,7 +20,7 @@ st.markdown("""
         font-size: 2.2rem;
         font-weight: bold;
         text-align: center;
-        margin-top: 15px;
+        margin-top: 10px;
         margin-bottom: 5px;
     }
     .sub-title {
@@ -50,9 +31,6 @@ st.markdown("""
     }
     </style>
 """, unsafe_allow_html=True)
-
-# Tampilkan Banner Ilustrasi Atas
-tampilkan_header_banner()
 
 # ---------------------------------------------------------
 # NAVIGATION / SIDEBAR
@@ -81,6 +59,7 @@ st.sidebar.info("💡 **Petunjuk:** Pastikan Anda mengisi absensi setiap hari da
 if menu == "🏠 Homepage":
     st.markdown("<div class='main-title'>Selamat Datang di LMS Pelatihan Petugas PES SE2026</div>", unsafe_allow_html=True)
     st.markdown("<div class='sub-title'>Portal Pembelajaran Mandiri (MOOC) Petugas Pendataan Post Enumeration Survey Sensus Ekonomi 2026</div>", unsafe_allow_html=True)
+    st.divider()
     
     col1, col2 = st.columns([2, 1])
     
@@ -248,5 +227,6 @@ elif menu == "✏️ Kuis Asynchronous":
                 else:
                     st.error("❌ Harap isi Nama dan ID Petugas.")
 
-# Tampilkan Footer Ilustrasi Bawah
-tampilkan_footer_ilustrasi()
+# Footer Teks Sederhana
+st.divider()
+st.caption("© 2026 Badan Pusat Statistik — Post Enumeration Survey Sensus Ekonomi 2026")
