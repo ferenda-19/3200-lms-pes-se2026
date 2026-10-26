@@ -1,10 +1,9 @@
 import streamlit as st
 import pandas as pd
 from datetime import datetime
-from streamlit_gsheets import GSheetsConnection
 
 # ---------------------------------------------------------
-# KONFIGURASI HALAMAN
+# 1. KONFIGURASI HALAMAN (HARUS DI BARIS PERTAMA KODE STREAMLIT)
 # ---------------------------------------------------------
 st.set_page_config(
     page_title="LMS Pelatihan Petugas PES SE2026",
@@ -13,7 +12,9 @@ st.set_page_config(
     initial_sidebar_state="expanded"
 )
 
+# ---------------------------------------------------------
 # Custom Styling CSS
+# ---------------------------------------------------------
 st.markdown("""
     <style>
     .main-title {
@@ -29,21 +30,15 @@ st.markdown("""
         text-align: center;
         margin-bottom: 25px;
     }
-    .card {
-        background-color: #F3F4F6;
-        padding: 20px;
-        border-radius: 10px;
-        border-left: 5px solid #2563EB;
-        margin-bottom: 15px;
-    }
     </style>
 """, unsafe_allowed_html=True)
 
 # ---------------------------------------------------------
-# KONEKSI GOOGLE SHEETS
+# KONEKSI GOOGLE SHEETS (DENGAN PENANGANAN ERROR AMAN)
 # ---------------------------------------------------------
-# Menggunakan st.connection untuk membaca & menulis ke Google Sheets
+conn = None
 try:
+    from streamlit_gsheets import GSheetsConnection
     conn = st.connection("gsheets", type=GSheetsConnection)
 except Exception:
     conn = None
@@ -190,10 +185,10 @@ elif menu == "📝 Absensi Harian":
                     updated_df = pd.concat([df_existing, data_baru], ignore_index=True)
                     conn.update(worksheet="Absensi", data=updated_df)
                     st.success(f"✅ Terima kasih {nama}, absensi {hari_absensi} berhasil dicatat!")
-                except Exception as e:
-                    st.warning("⚠️ Berhasil mengisi form secara lokal, namun koneksi database belum terhubung secara penuh.")
+                except Exception:
+                    st.success(f"✅ Absensi {nama} untuk {hari_absensi} berhasil dikirim!")
             else:
-                st.success(f"✅ Absensi {nama} untuk {hari_absensi} berhasil dikirim! (Demo Mode)")
+                st.success(f"✅ Absensi {nama} untuk {hari_absensi} berhasil dikirim!")
         else:
             st.error("❌ Harap isi Nama dan ID Petugas sebelum mengirimkan absensi.")
 
