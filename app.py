@@ -1,7 +1,7 @@
 import streamlit as st
 import pandas as pd
+import requests
 from datetime import datetime
-from streamlit_gsheets import GSheetsConnection
 
 # ---------------------------------------------------------
 # 1. KONFIGURASI HALAMAN
@@ -17,7 +17,7 @@ st.set_page_config(
 st.markdown("""
     <style>
     .main-title {
-        color: #FBBF24; /* Warna Kuning Terang Konsisten untuk Semua Judul Halaman */
+        color: #FBBF24;
         font-size: 2.2rem;
         font-weight: bold;
         text-align: center;
@@ -34,20 +34,20 @@ st.markdown("""
 """, unsafe_allow_html=True)
 
 # ---------------------------------------------------------
-# KONEKSI GOOGLE SHEETS
+# URL GOOGLE APPS SCRIPT WEB APP & SPREADSHEET CSV READ
 # ---------------------------------------------------------
-SPREADSHEET_URL = "https://docs.google.com/spreadsheets/d/1JOudkfgyJrlc2iTlsKofHNja3Xkn2NgLV4D1k-_9jd4/edit?usp=sharing"
+# Paste URL Web App dari Apps Script di bawah ini:
+WEB_APP_URL = "https://script.google.com/macros/s/AKfycb.../exec"  # <--- GANTI LINK INI
 
-# Inisialisasi koneksi ke Google Sheets
-conn = st.connection("gsheets", type=GSheetsConnection)
+# Link CSV untuk membaca data publik spreadsheet secara langsung:
+SPREADSHEET_ID = "1JOudkfgyJrlc2iTlsKofHNja3Xkn2NgLV4D1k-_9jd4"
+CSV_READ_URL = f"https://docs.google.com/spreadsheets/d/{SPREADSHEET_ID}/gviz/tq?tqx=out:csv"
 
 def load_data_absensi():
     try:
-        # Membaca data absensi terkini dari Google Sheets
-        df = conn.read(spreadsheet=SPREADSHEET_URL, ttl="0")
+        df = pd.read_csv(CSV_READ_URL)
         return df.dropna(how="all")
     except Exception as e:
-        st.error(f"Gagal memuat data dari Google Sheets: {e}")
         return pd.DataFrame()
 
 # ---------------------------------------------------------
@@ -178,7 +178,7 @@ elif menu == "📂 Bahan & Materi":
     """)
 
 # ---------------------------------------------------------
-# 4. ABSENSI HARIAN (LANGSUNG TERSIMPAN KE GOOGLE SHEETS)
+# 4. ABSENSI HARIAN (VIA HTTP POST GOOGLE APPS SCRIPT)
 # ---------------------------------------------------------
 elif menu == "📝 Absensi Harian":
     st.markdown("<div class='main-title'>📝 Form Absensi Kehadiran Petugas</div>", unsafe_allow_html=True)
@@ -212,22 +212,23 @@ elif menu == "📝 Absensi Harian":
             if nama and id_petugas:
                 waktu_sekarang = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
                 
-                new_row = pd.DataFrame([{
-                    "Waktu Absen": waktu_sekarang,
-                    "Nama Lengkap": nama,
-                    "ID Petugas / NIP": id_petugas,
-                    "Kabupaten/Kota": kab_kota,
-                    "Hari Absensi": hari_absensi,
-                    "Catatan": catatan if catatan else "-"
-                }])
+                payload = {
+                    "waktu_absen": waktu_sekarang,
+                    "nama": nama,
+                    "id_petugas": id_petugas,
+                    "kab_kota": kab_kota,
+                    "hari_absensi": hari_absensi,
+                    "catatan": catatan if catatan else "-"
+                }
                 
                 try:
-                    df_existing = load_data_absensi()
-                    df_updated = pd.concat([df_existing, new_row], ignore_index=True)
-                    conn.update(spreadsheet=SPREADSHEET_URL, data=df_updated)
-                    st.success(f"✅ Terima kasih **{nama}**, absensi **{hari_absensi}** berhasil tersimpan langsung ke Google Sheets pada {waktu_sekarang}!")
+                    res = requests.post(WEB_APP_URL, json=payload)
+                    if res.status_code == 200:
+                        st.success(f"✅ Terima kasih **{nama}**, absensi **{hari_absensi}** berhasil tersimpan langsung ke Google Sheets pada {waktu_sekarang}!")
+                    else:
+                        st.error("❌ Gagal mengirimkan absensi. Silakan coba lagi.")
                 except Exception as e:
-                    st.error(f"❌ Gagal menyimpan absensi ke Google Sheets: {e}")
+                    st.error(f"❌ Terjadi kesalahan: {e}")
             else:
                 st.error("❌ Harap isi Nama dan ID Petugas sebelum mengirimkan absensi.")
 
