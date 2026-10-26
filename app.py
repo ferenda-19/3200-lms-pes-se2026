@@ -13,25 +13,46 @@ st.set_page_config(
 )
 
 # ---------------------------------------------------------
-# Custom Styling CSS (Perbaikan Parameter unsafe_allow_html)
+# FUNGSI UNTUK MENAMPILKAN BANNER ATAS & FOOTER BAWAH
 # ---------------------------------------------------------
+def tampilkan_header_banner():
+    # Gambar ilustrasi header atas (memanjang kiri-kanan)
+    st.image(
+        "https://images.unsplash.com/photo-1516321318423-f06f85e504b3?q=80&w=1200&auto=format&fit=crop",
+        use_column_width=True
+    )
+
+def tampilkan_footer_ilustrasi():
+    st.divider()
+    # Hiasan gambar ilustrasi bawah agar tidak kosong
+    st.image(
+        "https://images.unsplash.com/photo-1522071820081-009f0129c71c?q=80&w=1200&auto=format&fit=crop",
+        use_column_width=True
+    )
+    st.caption("© 2026 Badan Pusat Statistik — Post Enumeration Survey Sensus Ekonomi 2026")
+
+# Custom Styling CSS (Kontras Tinggi & Responsif)
 st.markdown("""
     <style>
     .main-title {
-        color: #1E3A8A;
+        color: #FBBF24; /* Warna Kuning Terang agar sangat kontras */
         font-size: 2.2rem;
         font-weight: bold;
         text-align: center;
+        margin-top: 15px;
         margin-bottom: 5px;
     }
     .sub-title {
-        color: #4B5563;
+        color: #F3F4F6; /* Warna Putih/Abu Terang kontras */
         font-size: 1.1rem;
         text-align: center;
         margin-bottom: 25px;
     }
     </style>
 """, unsafe_allow_html=True)
+
+# Tampilkan Banner Ilustrasi Atas
+tampilkan_header_banner()
 
 # ---------------------------------------------------------
 # NAVIGATION / SIDEBAR
@@ -47,7 +68,7 @@ menu = st.sidebar.radio(
         "📅 Jadwal MOOC (2 Hari)", 
         "📂 Bahan & Materi", 
         "📝 Absensi Harian", 
-        "✏️ Kuis Asinkronus"
+        "✏️ Kuis Asynchronous"
     ]
 )
 
@@ -59,26 +80,26 @@ st.sidebar.info("💡 **Petunjuk:** Pastikan Anda mengisi absensi setiap hari da
 # ---------------------------------------------------------
 if menu == "🏠 Homepage":
     st.markdown("<div class='main-title'>Selamat Datang di LMS Pelatihan Petugas PES SE2026</div>", unsafe_allow_html=True)
-    st.markdown("<div class='sub-title'>Portal Pembelajaran Mandiri (MOOC) Petugas Pendataan Ekosistem Sensus Ekonomi 2026</div>", unsafe_allow_html=True)
+    st.markdown("<div class='sub-title'>Portal Pembelajaran Mandiri (MOOC) Petugas Pendataan Post Enumeration Survey Sensus Ekonomi 2026</div>", unsafe_allow_html=True)
     
     col1, col2 = st.columns([2, 1])
     
     with col1:
         st.markdown("""
         ### 👋 Halo, Calon Petugas PES SE2026!
-        Selamat datang di platform *Massive Open Online Course* (MOOC). Pelatihan ini dirancang untuk membekali Anda dengan pengetahuan dasar, sound metodologi, serta tata cara pendataan lapangan Sensus Ekonomi 2026.
+        Selamat datang di platform *Massive Open Online Course* (MOOC). Pelatihan ini dirancang untuk membekali Anda dengan pengetahuan dasar, metodologi, serta tata cara pendataan lapangan Post Enumeration Survey Sensus Ekonomi 2026.
         
         #### 📌 Alur Pelatihan (2 Hari):
         1. **Mempelajari Jadwal & Materi:** Unduh pedoman dan paparan materi di menu yang tersedia.
         2. **Mengisi Absensi:** Wajib dilakukan setiap hari pada menu **Absensi Harian**.
-        3. **Mengerjakan Kuis Asinkronus:** Selesaikan kuis evaluasi Harian 1 & Harian 2 untuk mengukur pemahaman Anda.
+        3. **Mengerjakan Kuis Asynchronous:** Selesaikan kuis evaluasi Harian 1 & Harian 2 untuk mengukur pemahaman Anda.
         """)
         
-        st.info("🔔 **Pengumuman:** Pastikan koneksi internet stabil saat mengunduh materi dan mengerjakan kuis asinkronus.")
+        st.info("🔔 **Pengumuman:** Pastikan koneksi internet stabil saat mengunduh materi dan mengerjakan kuis Asynchronous.")
 
     with col2:
         st.markdown("### 📊 Ringkasan Pelatihan")
-        st.metric(label="Durasi Pelatihan", value="2 Hari (Asinkronus)")
+        st.metric(label="Durasi Pelatihan", value="2 Hari (Asynchronous)")
         st.metric(label="Target Kelulusan Kuis", value="≥ 70 / 100")
         st.metric(label="Status Pendaftaran", value="Aktif", delta="Terverifikasi")
 
@@ -98,7 +119,7 @@ elif menu == "📅 Jadwal MOOC (2 Hari)":
         * **09.30 - 11.30 WIB** | 🖥️ *Menyimak Paparan Materi 1: Konsep Bangunan & Perusahaan/Usaha*
         * **11.30 - 13.00 WIB** | ☕ *Istirahat & Pengerjaan Absensi Hari 1*
         * **13.00 - 15.00 WIB** | 📝 *Diskusi Mandiri & Pendalaman Kasus*
-        * **15.00 - 17.00 WIB** | ✏️ *Pengerjakan Kuis Asinkronus Hari 1*
+        * **15.00 - 17.00 WIB** | ✏️ *Pengerjakan Kuis Asynchronous Hari 1*
         """)
 
     with tab2:
@@ -108,7 +129,7 @@ elif menu == "📅 Jadwal MOOC (2 Hari)":
         * **10.00 - 12.00 WIB** | 📖 *Studi Kasus Penelusuran Lapangan & Entri Data Test*
         * **12.00 - 13.00 WIB** | ☕ *Istirahat & Pengerjaan Absensi Hari 2*
         * **13.00 - 15.00 WIB** | 📝 *Review Modul Etika Wawancara & Kualitas Data*
-        * **15.00 - 17.00 WIB** | ✏️ *Pengerjakan Kuis Asinkronus Hari 2*
+        * **15.00 - 17.00 WIB** | ✏️ *Pengerjakan Kuis Asynchronous Hari 2*
         """)
 
 # ---------------------------------------------------------
@@ -163,10 +184,10 @@ elif menu == "📝 Absensi Harian":
             st.error("❌ Harap isi Nama dan ID Petugas sebelum mengirimkan absensi.")
 
 # ---------------------------------------------------------
-# 5. KUIS ASINKRONUS
+# 5. KUIS ASYNCHRONOUS
 # ---------------------------------------------------------
-elif menu == "✏️ Kuis Asinkronus":
-    st.title("✏️ Kuis Evaluasi Asinkronus")
+elif menu == "✏️ Kuis Asynchronous":
+    st.title("✏️ Kuis Evaluasi Asynchronous")
     st.write("Pilih kuis harian yang ingin Anda kerjakan. Anda hanya dapat mengirimkan jawaban 1 kali.")
 
     pilihan_kuis = st.radio("Pilih Kuis:", ["Kuis Hari 1: Konsep & Metodologi", "Kuis Hari 2: Pengisian Kuesioner"], horizontal=True)
@@ -178,7 +199,7 @@ elif menu == "✏️ Kuis Asinkronus":
             id_kuis = st.text_input("ID Petugas *")
             
             q1 = st.radio(
-                "1. Apa cakupan utama pendataan Ekosistem Sensus Ekonomi 2026?",
+                "1. Apa cakupan utama pendataan Post Enumeration Survey Sensus Ekonomi 2026?",
                 ["Hanya usaha skala besar", "Seluruh aktivitas ekonomi non-pertanian", "Hanya sektor perdagangan e-commerce", "Sektor pertanian skala mikro"]
             )
             q2 = st.radio(
@@ -226,3 +247,6 @@ elif menu == "✏️ Kuis Asinkronus":
                     st.success(f"🎉 Kuis Berhasil Dikirim! Skor Anda: **{skor} / 100**")
                 else:
                     st.error("❌ Harap isi Nama dan ID Petugas.")
+
+# Tampilkan Footer Ilustrasi Bawah
+tampilkan_footer_ilustrasi()
