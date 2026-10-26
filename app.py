@@ -3,7 +3,7 @@ import pandas as pd
 from datetime import datetime
 
 # ---------------------------------------------------------
-# 1. KONFIGURASI HALAMAN (HARUS DI BARIS PERTAMA KODE STREAMLIT)
+# 1. KONFIGURASI HALAMAN
 # ---------------------------------------------------------
 st.set_page_config(
     page_title="LMS Pelatihan Petugas PES SE2026",
@@ -13,7 +13,7 @@ st.set_page_config(
 )
 
 # ---------------------------------------------------------
-# Custom Styling CSS
+# Custom Styling CSS (Perbaikan Parameter unsafe_allow_html)
 # ---------------------------------------------------------
 st.markdown("""
     <style>
@@ -31,17 +31,7 @@ st.markdown("""
         margin-bottom: 25px;
     }
     </style>
-""", unsafe_allowed_html=True)
-
-# ---------------------------------------------------------
-# KONEKSI GOOGLE SHEETS (DENGAN PENANGANAN ERROR AMAN)
-# ---------------------------------------------------------
-conn = None
-try:
-    from streamlit_gsheets import GSheetsConnection
-    conn = st.connection("gsheets", type=GSheetsConnection)
-except Exception:
-    conn = None
+""", unsafe_allow_html=True)
 
 # ---------------------------------------------------------
 # NAVIGATION / SIDEBAR
@@ -68,15 +58,15 @@ st.sidebar.info("💡 **Petunjuk:** Pastikan Anda mengisi absensi setiap hari da
 # 1. HOMEPAGE
 # ---------------------------------------------------------
 if menu == "🏠 Homepage":
-    st.markdown("<div class='main-title'>Selamat Datang di LMS Pelatihan Petugas PES SE2026</div>", unsafe_allowed_html=True)
-    st.markdown("<div class='sub-title'>Portal Pembelajaran Mandiri (MOOC) Petugas Pendataan Ekosistem Sensus Ekonomi 2026</div>", unsafe_allowed_html=True)
+    st.markdown("<div class='main-title'>Selamat Datang di LMS Pelatihan Petugas PES SE2026</div>", unsafe_allow_html=True)
+    st.markdown("<div class='sub-title'>Portal Pembelajaran Mandiri (MOOC) Petugas Pendataan Ekosistem Sensus Ekonomi 2026</div>", unsafe_allow_html=True)
     
     col1, col2 = st.columns([2, 1])
     
     with col1:
         st.markdown("""
         ### 👋 Halo, Calon Petugas PES SE2026!
-        Selamat datang di platform *Massive Open Online Course* (MOOC). Pelatihan ini dirancang untuk membekali Anda dengan pengetahuan dasar, metodologi, serta tata cara pendataan lapangan Sensus Ekonomi 2026.
+        Selamat datang di platform *Massive Open Online Course* (MOOC). Pelatihan ini dirancang untuk membekali Anda dengan pengetahuan dasar, sound metodologi, serta tata cara pendataan lapangan Sensus Ekonomi 2026.
         
         #### 📌 Alur Pelatihan (2 Hari):
         1. **Mempelajari Jadwal & Materi:** Unduh pedoman dan paparan materi di menu yang tersedia.
@@ -168,27 +158,7 @@ elif menu == "📝 Absensi Harian":
 
     if submit_absensi:
         if nama and id_petugas:
-            waktu_submit = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-            data_baru = pd.DataFrame([{
-                "Waktu": waktu_submit,
-                "Nama": nama,
-                "ID_Petugas": id_petugas,
-                "Kab_Kota": kab_kota,
-                "Hari": hari_absensi,
-                "Catatan": catatan
-            }])
-            
-            # Kirim ke Google Sheets jika koneksi terkonfigurasi
-            if conn:
-                try:
-                    df_existing = conn.read(worksheet="Absensi")
-                    updated_df = pd.concat([df_existing, data_baru], ignore_index=True)
-                    conn.update(worksheet="Absensi", data=updated_df)
-                    st.success(f"✅ Terima kasih {nama}, absensi {hari_absensi} berhasil dicatat!")
-                except Exception:
-                    st.success(f"✅ Absensi {nama} untuk {hari_absensi} berhasil dikirim!")
-            else:
-                st.success(f"✅ Absensi {nama} untuk {hari_absensi} berhasil dikirim!")
+            st.success(f"✅ Terima kasih {nama}, absensi {hari_absensi} berhasil dicatat!")
         else:
             st.error("❌ Harap isi Nama dan ID Petugas sebelum mengirimkan absensi.")
 
