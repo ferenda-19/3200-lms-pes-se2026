@@ -159,7 +159,7 @@ elif menu == "📂 Bahan & Materi":
     st.subheader("1. 📖 Buku Pedoman")
     st.markdown("""
     * **Buku 1 Pedoman Teknis PES SE2026** — [📄 Akses / Unduh File](https://drive.google.com/file/d/1tXg_Lk232xKc3Lr6R52H3JLAkN0YS_4j/view?usp=drivesdk)
-    * **Buku 2 Pedoman Innas PES SE2026** — [📄 Akses / Unduh File](https://drive.google.com/file/d/1xDsrcrRmA9KQPxerE2if6bwoEvcymnom/view?usp=drivesdk)
+    * **Buku 4 Pedoman Pendataan Lapangan PES SE2026** — [📄 Akses / Unduh File](https://drive.google.com/file/d/120Ir9EdJjnZLcZK6xFzZouu2ar1eO3aB/view?usp=sharing)
     * **Buku 3 Pedoman Pemeriksa PES SE2026** — [📄 Akses / Unduh File](https://drive.google.com/file/d/1VGoGgHk0_ikOdNUnYC1BVvHo_Mmb0z45/view?usp=drivesdk)
     """)
 
